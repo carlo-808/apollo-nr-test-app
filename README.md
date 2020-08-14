@@ -2,12 +2,14 @@
 
 This app adds a GraphQL interface to the NASA Near Earth Objects API.
 
-You will need to provide these env variable values in the docker-compose file:
+You can create a local `.env` file with these variable values:
 
 - NEW_RELIC_HOST
 - NEW_RELIC_LICENSE_KEY
 - NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST
 - NASA_API_KEY
+
+More info on the `.env` format [here](https://docs.docker.com/compose/env-file/).
 
 You can generate a `NASA_API_KEY` [here](https://api.nasa.gov/)
 

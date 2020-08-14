@@ -9,10 +9,10 @@ services:
       volumes:
           - ./apollo_server/:/usr/src/app
       environment:
-          - NEW_RELIC_LICENSE_KEY=redacted
-          - NEW_RELIC_HOST=redacted
-          - NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST=redacted
-          - NASA_API_KEY=redacted
+          - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+          - NEW_RELIC_HOST=${NEW_RELIC_HOST}
+          - NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST=${NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST}
+          - NASA_API_KEY=${NASA_API_KEY}
       networks:
           - network
       ports:
