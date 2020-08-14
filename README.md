@@ -13,7 +13,7 @@ You can generate a `NASA_API_KEY` [here](https://api.nasa.gov/)
 
 OR
 
-use `DEMO_KEY` which limits the number of calls you can make.
+use `DEMO_KEY` as the `NASA_API_KEY` value which limits the number of calls you can make.
 
 run: `docker-compose up` at the root dir and the apollo server will be accessible at `http://locahost:4000`
 
