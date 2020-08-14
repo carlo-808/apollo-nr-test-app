@@ -1,0 +1,25 @@
+version: "3"
+services:
+  apollo_server:
+      container_name: apollo_asteroids
+      restart: always
+      image: apollo_server
+      build:
+          context: ./apollo_server
+      volumes:
+          - ./apollo_server/:/usr/src/app
+      environment:
+          - NEW_RELIC_LICENSE_KEY=redacted
+          - NEW_RELIC_HOST=redacted
+          - NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST=redacted
+          - NASA_API_KEY=redacted
+      networks:
+          - network
+      ports:
+          - 4000:4000
+
+networks:
+    network:
+
+volumes:
+    db:
