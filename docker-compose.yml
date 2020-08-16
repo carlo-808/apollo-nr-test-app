@@ -1,25 +1,44 @@
 version: "3"
 services:
+
+  db:
+    container_name: roids_db
+    restart: always
+    image: psql
+    build:
+      context: ./db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=roids
+    networks:
+      - network
+    ports:
+      - 5432:5432
+
   apollo_server:
-      container_name: apollo_asteroids
-      restart: always
-      image: apollo_server
-      build:
-          context: ./apollo_server
-      volumes:
-          - ./apollo_server/:/usr/src/app
-      environment:
-          - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
-          - NEW_RELIC_HOST=${NEW_RELIC_HOST}
-          - NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST=${NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST}
-          - NASA_API_KEY=${NASA_API_KEY}
-      networks:
-          - network
-      ports:
-          - 4000:4000
+    container_name: apollo_asteroids
+    restart: always
+    image: apollo_server
+    build:
+      context: ./apollo_server
+    volumes:
+      - ./apollo_server/:/usr/src/app
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/roids
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+      - NEW_RELIC_HOST=${NEW_RELIC_HOST}
+      - NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST=${NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST}
+      - NASA_API_KEY=${NASA_API_KEY}
+    depends_on:
+      - db
+    networks:
+      - network
+    ports:
+      - 4000:4000
 
 networks:
-    network:
+  network:
 
 volumes:
-    db:
+  db:
