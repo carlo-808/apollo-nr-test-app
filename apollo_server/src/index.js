@@ -1,10 +1,11 @@
 'use strict'
-require('newrelic')
+const newrelic = require('newrelic')
 
 const { ApolloServer } = require('apollo-server')
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
 const Sequelize = require('sequelize')
+const xPlugin = require('./plugin')
 
 const AsteroidAPI = require('./datasources/astroid')
 const roidModel = require('./datasources/persistModel')
@@ -25,7 +26,12 @@ const server = new ApolloServer({
 		return {
 			token: process.env.NASA_API_KEY
 		}
-	}
+	},
+	plugins: [
+		xPlugin({
+			newrelic
+		})
+	]
  })
 
 server.listen().then(({url}) => {
