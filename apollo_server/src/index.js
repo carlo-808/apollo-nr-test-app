@@ -6,6 +6,7 @@ const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
 const Sequelize = require('sequelize')
 const xPlugin = require('./plugin')
+const nrPlugin = require('./plugin2')
 
 const AsteroidAPI = require('./datasources/astroid')
 const roidModel = require('./datasources/persistModel')
@@ -30,7 +31,8 @@ const server = new ApolloServer({
 	plugins: [
 		xPlugin({
 			newrelic
-		})
+		}),
+		nrPlugin
 	]
  })
 
