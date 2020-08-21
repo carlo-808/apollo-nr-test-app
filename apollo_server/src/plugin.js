@@ -16,10 +16,16 @@ const xPlugin = (options) => {
       return {
         didResolveOperation (requestContext) {
           operation = requestContext.operationName
+          // console.log(' >>>>>>>>>>>>>>>>>>> ', requestContext)
+          console.log(' REquest operatoin ////// ')
+          console.log(requestContext.operation.selectionSet[0])
           nr.addCustomSpanAttribute('Graphql Resolved', 'Operation')
         },
         willSendResponse (context) {
-          console.log(context.operation.selectionSet.selections)
+          const extensions = context.response.extensions
+          console.log(' Context: ', extensions.tracing)
+          console.log(' resolvers: ', extensions.tracing.execution.resolvers)
+          console.log(' metrics ', context.metrics)
           const timerStop = Date.now()
           const timing = timerStop - timerStart
           const segment = nr.agent.tracer.getSegment()

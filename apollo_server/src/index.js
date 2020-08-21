@@ -17,25 +17,26 @@ roidModel(sequelize, Sequelize.DataTypes)
 const models = sequelize.models
 
 const server = new ApolloServer({ 
-	typeDefs,
-	resolvers,
+  typeDefs,
+  resolvers,
   dataSources: () => ({
-		asteroidAPI: new AsteroidAPI(),
-		models
-	}),
-	context: () => {
-		return {
-			token: process.env.NASA_API_KEY
-		}
-	},
-	plugins: [
-		xPlugin({
-			newrelic
-		}),
-		nrPlugin
-	]
+    asteroidAPI: new AsteroidAPI(),
+    models
+  }),
+  context: () => {
+    return {
+      token: process.env.NASA_API_KEY
+    }
+  },
+  plugins: [
+    // xPlugin({
+    //   newrelic
+    // }),
+    nrPlugin({newrelic})
+  ],
+  tracing: true
  })
 
 server.listen().then(({url}) => {
-	console.log(`🚀 Server ready at ${url}`)
+  console.log(`🚀 Server ready at ${url}`)
 })
