@@ -5,8 +5,8 @@ const { ApolloServer } = require('apollo-server')
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
 const Sequelize = require('sequelize')
-const xPlugin = require('./plugin')
-const nrPlugin = require('./plugin2')
+const shimPlugin = require('./plugins/plugin')
+const nrPlugin = require('./plugins/plugin2')
 
 const AsteroidAPI = require('./datasources/astroid')
 const roidModel = require('./datasources/persistModel')
@@ -29,12 +29,11 @@ const server = new ApolloServer({
     }
   },
   plugins: [
-    // xPlugin({
-    //   newrelic
-    // }),
-    nrPlugin({newrelic})
-  ],
-  tracing: true
+    shimPlugin({
+      newrelic
+    }),
+    // nrPlugin({newrelic})
+  ]
  })
 
 server.listen().then(({url}) => {

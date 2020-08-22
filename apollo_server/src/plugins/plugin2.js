@@ -18,7 +18,8 @@ const NrPlugin = (options) => {
 
       startWallTime = new Date()
       startHrTime = process.hrtime()
-      let operation
+
+      const shim = nr.shim
 
       return {
         executionDidStart: () => ({
@@ -28,18 +29,29 @@ const NrPlugin = (options) => {
           },
 
           willResolveField({source, info}) {
+            let segment = null
+            
+            if (isQueryOrMutation(info.parentType)) {
+              segment = shim.createSegment(info.fieldName)
+              segment.start()
+            }
+
             const resolverCall = {
               path: info.path,
               fieldName: info.fieldName,
               parentType: info.parentType,
               returnType: info.returnType,
               startOffset: process.hrtime(startHrTime),
+              segment: segment
             }
 
             resolverCalls.push(resolverCall)
 
             return () => {
               resolverCall.endOffset = process.hrtime(startHrTime)
+              if (resolverCall.segment) {
+                segment.end()
+              }
             }
           }
         }),
@@ -57,6 +69,7 @@ const NrPlugin = (options) => {
             return
           }
 
+          // get the slowest resolved field
           const slowest_field = resolverCalls.filter((call) => {
             return call.parentType + '' !== 'Query' && call.parentType + '' !== 'Mutation'
           }).reduce((prev, curr) => {
@@ -96,7 +109,7 @@ const NrPlugin = (options) => {
           const timerStop = Date.now()
           const timing = timerStop - startWallTime
           const segment = nr.agent.tracer.getSegment()
-          segment.name = context.operationName
+          segment.name = `Operation: ${context.operationName}`
           nr.addCustomSpanAttributes({
             'gql operation name': context.operationName,
             'gql operation duration ms': timing
@@ -148,6 +161,10 @@ const durationHrTimeToNanos = (hrtime) => {
 
 const nanosToMicros = (nanos) => {
   return nanos / 1e6
+}
+
+const isQueryOrMutation = (type) => {
+  return type + '' === 'Query' || type + '' === 'Mutation' 
 }
 
 module.exports = NrPlugin

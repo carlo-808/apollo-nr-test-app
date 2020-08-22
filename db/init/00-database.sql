@@ -1,5 +1,7 @@
 \connect roids;
 
+DROP TABLE IF EXISTS favroids;
+
 CREATE TABLE favroids (
     id SERIAL PRIMARY KEY,
     name TEXT,
