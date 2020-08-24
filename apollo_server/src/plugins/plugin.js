@@ -3,29 +3,54 @@
 const shimPlugin = (options) => {
   const nr = options.newrelic
   return {
-      requestDidStart() {
+      requestDidStart(context) {
         const shim = nr.shim
+        const segmentMap = new Map()
+
+        const segmento = nr.agent.tracer.getSegment()
+        segmento.name = `Operation: ${context.operationName}`
+        const sego = {
+          segment: segmento,
+          name: segmento.name
+        }
+
+        shim.setActiveSegment(segmento)
+
+        segmentMap.set('root', sego)
 
         return {
           executionDidStart: () => ({
-            willResolveField({source, info}) {
+            willResolveField({source, info, context}) {
               let segment = null
-
               if (isQueryOrMutation(info.parentType)) {
-                segment = shim.createSegment(info.fieldName)
-                segment.start()
+                const seg = {
+                  segment: shim.createSegment(info.fieldName),
+                  name: info.fieldName
+                }
+                
+                seg.segment.start()
+                shim.setActiveSegment(seg.segment)
+
+                segmentMap.set(info.fieldName, seg)
               }
 
               return () => {
-                if (segment) {
-                  segment.end()
+                if (isQueryOrMutation(arguments[0].info.parentType)) {
+                  const seg = segmentMap.get(info.fieldName).segment
+  
+                  if (seg) {
+                    seg.end()
+                    const rootSeg = segmentMap.get('root').segment
+                    shim.setActiveSegment(rootSeg)
+                  }
                 }
               }
             }
           }),
           willSendResponse (context) {
-            const segment = nr.agent.tracer.getSegment()
-            segment.name = `Operation: ${context.operationName}`
+            // name the top level segment ?
+            const segmento = nr.agent.tracer.getSegment()
+            segment.name = `Operation: ` + context.operationName
           }
         }
     }
