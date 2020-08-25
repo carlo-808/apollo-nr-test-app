@@ -50,7 +50,7 @@ const shimPlugin = (options) => {
           willSendResponse (context) {
             // name the top level segment ?
             const segmento = nr.agent.tracer.getSegment()
-            segment.name = `Operation: ` + context.operationName
+            segmento.name = `Operation: ` + context.operationName
           }
         }
     }
