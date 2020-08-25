@@ -48,9 +48,9 @@ const shimPlugin = (options) => {
             }
           }),
           willSendResponse (context) {
-            // name the top level segment ?
-            const segmento = nr.agent.tracer.getSegment()
-            segmento.name = `Operation: ` + context.operationName
+            // This is not getting the right segment
+            // const segmento = nr.agent.tracer.getSegment()
+            // segmento.name = `Operation: ` + context.operationName
           }
         }
     }
