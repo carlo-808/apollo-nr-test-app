@@ -21,8 +21,12 @@ const shimPlugin = (options) => {
         return {
           didResolveOperation (context) {
             // console.log('>>>>>>>>>>> ', context.operationName)
-            segmentMap.get('root').segment.name 
+            const rootSeg = segmentMap.get('root').segment
+
+            rootSeg.name 
               = `Operation: ${context.operationName}`
+
+            nr.setTransactionName(`Operation: ${context.operationName}`)
           },
           executionDidStart: () => ({
             willResolveField({source, info, context}) {
