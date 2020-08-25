@@ -19,6 +19,10 @@ const shimPlugin = (options) => {
         segmentMap.set('root', sego)
 
         return {
+          didResolveOperation (context) {
+            // console.log('>>>>>>>>>>> ', context.operationName)
+            segmentMap.get('root').segment.name = context.operationName
+          },
           executionDidStart: () => ({
             willResolveField({source, info, context}) {
               if (isQueryOrMutation(info.parentType)) {
