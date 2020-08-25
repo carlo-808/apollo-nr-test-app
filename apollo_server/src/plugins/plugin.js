@@ -21,16 +21,18 @@ const shimPlugin = (options) => {
         return {
           didResolveOperation (context) {
             // console.log('>>>>>>>>>>> ', context.operationName)
-            segmentMap.get('root').segment.name = context.operationName
+            segmentMap.get('root').segment.name 
+              = `Operation: ${context.operationName}`
           },
           executionDidStart: () => ({
             willResolveField({source, info, context}) {
               if (isQueryOrMutation(info.parentType)) {
                 // get root segment to add as parent to Query segment
                 const rootSeg = segmentMap.get('root').segment
+                const name = `${info.parentType}: ${info.fieldName}`
 
                 const seg = {
-                  segment: shim.createSegment(info.fieldName, rootSeg),
+                  segment: shim.createSegment(name, rootSeg),
                   name: info.fieldName
                 }
                 
