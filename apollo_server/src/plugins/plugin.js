@@ -43,6 +43,7 @@ const shimPlugin = (options) => {
   const nr = options.newrelic
   return {
     requestDidStart(context) {
+      let txId
       const shim = nr.shim
       const segmentMap = new Map()
 
@@ -52,6 +53,8 @@ const shimPlugin = (options) => {
         segment: segmento,
         name: segmento.name
       }
+
+      txId = segmento.transaction.id
 
       shim.setActiveSegment(segmento)
 
@@ -68,6 +71,52 @@ const shimPlugin = (options) => {
           rootSeg.name = `Operation: ${name}`
           nr.setTransactionName(`Operation: ${name}`)
         },
+        parsingDidStart() {
+          const rootSeg = segmentMap.get('root').segment
+
+          const seg = {
+            segment: shim.createSegment('parsingStep', rootSeg),
+            name: 'parsingStep'
+          }
+
+          seg.segment.start()
+          shim.setActiveSegment(seg.segment)
+
+          segmentMap.set('parsingStep', seg)
+
+          return () => {
+            const seg = segmentMap.get('parsingStep').segment
+
+            if (seg) {
+              seg.end()
+              const rootSeg = segmentMap.get('root').segment
+              shim.setActiveSegment(rootSeg)
+            }
+          }
+        },
+        validationDidStart() {
+          const rootSeg = segmentMap.get('root').segment
+
+          const seg = {
+            segment: shim.createSegment('validationStep', rootSeg),
+            name: 'validationStep'
+          }
+
+          seg.segment.start()
+          shim.setActiveSegment(seg.segment)
+
+          segmentMap.set('validationStep', seg)
+
+          return () => {
+            const seg = segmentMap.get('validationStep').segment
+
+            if (seg) {
+              seg.end()
+              const rootSeg = segmentMap.get('root').segment
+              shim.setActiveSegment(rootSeg)
+            }
+          }
+        },
         executionDidStart: () => ({
           willResolveField({info}) {
             if (isQueryOrMutation(info.parentType)) {
@@ -83,12 +132,22 @@ const shimPlugin = (options) => {
               seg.segment.start()
               shim.setActiveSegment(seg.segment)
 
+              // test for correct transaction
+              if(seg.segment.transaction.id !== txId) {
+                console.log('WILL RESOLVE -  Tx BAD')
+              }
+
               segmentMap.set(info.fieldName, seg)
             }
 
             return () => {
               if (isQueryOrMutation(arguments[0].info.parentType)) {
                 const seg = segmentMap.get(info.fieldName).segment
+
+                // test for correct transaction
+                if(seg.transaction.id !== txId) {
+                  console.log('RESOLVED - Tx BAD - segment txId: ', seg.transaction.id, ' | root txId ', txId)
+                }
 
                 if (seg) {
                   seg.end()
