@@ -32,10 +32,30 @@ services:
       - NASA_API_KEY=${NASA_API_KEY}
     depends_on:
       - db
+      - slowpg
     networks:
       - network
     ports:
       - 4000:4000
+
+  slowpg:
+    container_name: slow_pg_asteroids
+    restart: always
+    image: slowpg
+    build:
+      context: ./slowPg
+    volumes:
+      - ./slowPg/:/usr/src/app
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/roids
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+      - NEW_RELIC_HOST=${NEW_RELIC_HOST}
+    depends_on:
+      - db
+    networks:
+      - network
+    ports:
+      - 7707:7707
 
 networks:
   network:

@@ -17,11 +17,19 @@ const typeDefs = gql`
     id: ID!
     name: String!
     roid_id: Int!
+    asteroiddata: String
+  }
+
+  type BadType {
+    bad: String
   }
 
   type Query {
     asteroids(date: String!): [Asteroid]!
+    closestAsteroid(date: String!): Asteroid
+    closestAsteroidFound: Asteroid
     roids: [Roid]!
+    badQuery: [BadType]!
   }
 
   type Mutation {

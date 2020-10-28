@@ -1,0 +1,18 @@
+{
+  "name": "slowpg",
+  "version": "0.1.0",
+  "description": "Slow postgres service",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "newrelic": "^6.13.2",
+    "nodemon": "^2.0.6",
+    "pg": "^8.4.1",
+    "sequelize": "^6.3.5"
+  }
+}

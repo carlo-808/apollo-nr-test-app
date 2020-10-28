@@ -1,14 +1,12 @@
 'use strict'
-const newrelic = require('newrelic')
 
 const { ApolloServer } = require('apollo-server')
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
 const Sequelize = require('sequelize')
-const shimPlugin = require('./plugins/plugin')
-const nrPlugin = require('./plugins/plugin2')
 
 const AsteroidAPI = require('./datasources/astroid')
+const slowPgAPI = require('./datasources/slowPg')
 const roidModel = require('./datasources/persistModel')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 sequelize.sync()
@@ -20,22 +18,17 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({
-    asteroidAPI: new AsteroidAPI(),
+    asteroidAPI: new AsteroidAPI(models),
+    slowPgAPI: new slowPgAPI(),
     models
   }),
   context: () => {
     return {
       token: process.env.NASA_API_KEY
     }
-  },
-  plugins: [
-    shimPlugin({
-      newrelic
-    }),
-    // nrPlugin({newrelic})
-  ]
+  }
  })
 
 server.listen().then(({url}) => {
-  console.log(`🚀 Server ready at ${url}`)
+  console.log(`🚀 Apollo GraphQL server ready at ${url}`)
 })

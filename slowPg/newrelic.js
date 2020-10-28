@@ -1,6 +1,6 @@
 'use strict'
 exports.config = {
-  app_name: ['Apollo Astroid Seeker'],
+  app_name: ['Apollo Slow Pg Service'],
   distributed_tracing: {
     enabled: true
   },
