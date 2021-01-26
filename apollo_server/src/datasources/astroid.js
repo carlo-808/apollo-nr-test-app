@@ -26,21 +26,21 @@ class AsteroidAPI extends RESTDataSource {
 		let closestAsteroid
 
 		data.forEach((x) => {
-			if (closestAsteroid === undefined || 
+			if (closestAsteroid === undefined ||
 				Number(x.miss_distance_km) < Number(closestAsteroid.miss_distance_km)) {
 					closestAsteroid = x
 			}
 		})
 
-		// TODO: make this itempotent
+		// TODO: make this idempotent
 		this.roidModel.Favroids.create({
 			name: closestAsteroid.name,
 			roid_id: closestAsteroid.id, asteroiddata: closestAsteroid })
-	
+
 		return closestAsteroid
-		
+
 		// const asteroid = data.reduce((acc, asteroid) => {
-		// 	return (acc.miss_distance_km === undefined || 
+		// 	return (acc.miss_distance_km === undefined ||
 		// 		Number(asteroid.miss_distance_km) < Number(acc.miss_distance_km)) ?
 		// 		asteroid : acc
 		// }, {})
@@ -54,7 +54,7 @@ class AsteroidAPI extends RESTDataSource {
 
 	asteroidReducer(asteroid) {
 		const approach_data = asteroid.close_approach_data[0]
-		const est_diameter = asteroid.estimated_diameter 
+		const est_diameter = asteroid.estimated_diameter
 		return {
 			id: asteroid.id,
 			name: asteroid.name,

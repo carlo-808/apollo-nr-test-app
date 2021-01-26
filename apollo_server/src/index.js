@@ -17,7 +17,7 @@ roidModel(sequelize, Sequelize.DataTypes)
 
 const models = sequelize.models
 
-const server = new ApolloServer({ 
+const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({

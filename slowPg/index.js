@@ -26,14 +26,20 @@ const getClosestAsteroidSoFar = (data) => {
 
 	data.forEach((x) => {
 		if(x.dataValues.asteroiddata !== null && x.dataValues.asteroiddata.miss_distance_km) {
-			if (closestAsteroid === undefined || 
+			if (closestAsteroid === undefined ||
 				Number(x.dataValues.asteroiddata.miss_distance_km) < Number(closestAsteroid.asteroiddata.miss_distance_km)) {
 					closestAsteroid = x.dataValues
 			}
 		}
 	})
 
-		return closestAsteroid.asteroiddata || {}
+	if (closestAsteroid && closestAsteroid.asteroiddata) {
+		return closestAsteroid.asteroiddata
+	}
+
+	return {
+		id: -1
+	}
 }
 
 app.get('/', async (req, res) => {

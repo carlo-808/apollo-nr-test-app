@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@newrelic/apollo-server-plugin": "^0.1.1",
+    "@newrelic/apollo-server-plugin": "^0.1.2",
     "apollo-datasource-rest": "^0.9.3",
     "apollo-server": "^2.16.1",
     "graphql": "^15.3.0",
-    "newrelic": "^6.14.0",
+    "newrelic": "^7.0.2",
     "nodemon": "^2.0.4",
     "pg": "^8.3.0",
     "sequelize": "^6.3.4"
